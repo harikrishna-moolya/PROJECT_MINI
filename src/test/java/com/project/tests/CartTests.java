@@ -4,32 +4,42 @@ import com.project.pages.HomePage;
 import com.project.pages.CartPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.time.Duration;
 
 public class CartTests extends BaseTest {
 
     @Test
-    public void addProductToCart(){
-
+    public void addProductToCart() {
         HomePage home = new HomePage(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         try {
-            // Clear and type product name manually to avoid dropdown issues
+            // Clear search, type product
             By searchBox = By.id("small-searchterms");
+            WebElement searchInput = driver.findElement(searchBox);
+            searchInput.clear();
+            searchInput.sendKeys("14.1-inch Laptop");
+            searchInput.sendKeys(Keys.ESCAPE);  // close dropdown
+            searchInput.sendKeys(Keys.ENTER);    // submit search
 
-            driver.findElement(searchBox).clear();
-            driver.findElement(searchBox).sendKeys("14.1-inch Laptop");
+            // Wait until Add to cart button is clickable
+            By addToCartBtn = By.cssSelector("input[value='Add to cart']");
+            wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn));
 
-            // Close dropdown by sending ESC (prevents overlay)
-            driver.findElement(searchBox).sendKeys(Keys.ESCAPE);
+            // Click first Add to cart button
+            driver.findElements(addToCartBtn).get(0).click();
 
-            // Press Enter to search
-            driver.findElement(searchBox).sendKeys(Keys.ENTER);
+            // Wait for cart overlay / success popup to disappear
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("bar-notification")));
 
-            // Click Add to Cart button for first product
-            driver.findElements(By.cssSelector("input[value='Add to cart']")).get(0).click();
-
+            // Open cart
             home.openCart();
 
             CartPage cp = new CartPage(driver);
