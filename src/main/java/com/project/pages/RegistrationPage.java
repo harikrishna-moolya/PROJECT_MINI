@@ -17,6 +17,7 @@ public class RegistrationPage {
     private By confirmPassword = By.id("ConfirmPassword");
     private By registerBtn = By.id("register-button");
     private By successMsg = By.cssSelector(".result");
+    private By errorMsg = By.cssSelector("div.validation-summary-errors");
 
     public RegistrationPage(WebDriver driver) {
         this.driver = driver;
@@ -54,7 +55,17 @@ public class RegistrationPage {
         driver.findElement(registerBtn).click();
     }
 
+    // For valid registration
     public String getSuccessMessage() {
         return driver.findElement(successMsg).getText();
+    }
+
+    // For invalid registration
+    public String getErrorMessage() {
+        try {
+            return driver.findElement(errorMsg).getText();
+        } catch (Exception e) {
+            return ""; // no error found
+        }
     }
 }
