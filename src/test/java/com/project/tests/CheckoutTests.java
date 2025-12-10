@@ -1,44 +1,62 @@
 package com.project.tests;
 
-import com.project.pages.HomePage;
 import com.project.pages.CartPage;
+import com.project.pages.CheckoutPage;
+import com.project.pages.HomePage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.time.Duration;
 
 public class CheckoutTests extends BaseTest {
 
     @Test
-    public void placeholderCheckout() {
+    public void testCheckoutFlow() {
 
         HomePage home = new HomePage(driver);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         try {
-            // Clear search box, type product name
+            // Search for a product
             By searchBox = By.id("small-searchterms");
-            driver.findElement(searchBox).clear();
-            driver.findElement(searchBox).sendKeys("14.1-inch Laptop");
+            WebElement input = driver.findElement(searchBox);
+            input.clear();
+            input.sendKeys("14.1-inch Laptop");
+            input.sendKeys(Keys.ESCAPE); // Close dropdown
+            input.sendKeys(Keys.ENTER);  // Submit search
 
-            // Close dropdown if appears
-            driver.findElement(searchBox).sendKeys(Keys.ESCAPE);
+            // Wait for "Add to cart" button to be clickable
+            By addToCartBtn = By.cssSelector("input[value='Add to cart']");
+            wait.until(ExpectedConditions.elementToBeClickable(addToCartBtn));
 
-            // Press ENTER to search
-            driver.findElement(searchBox).sendKeys(Keys.ENTER);
+            // Click the first "Add to cart" button
+            driver.findElements(addToCartBtn).get(0).click();
 
-            // Add first product to cart
-            driver.findElements(By.cssSelector("input[value='Add to cart']")).get(0).click();
+            //  Wait for success notification to disappear
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("bar-notification")));
 
-            // Open cart
+            //  Open cart
             home.openCart();
 
-            // Accept terms for checkout
-            CartPage cp = new CartPage(driver);
-            cp.acceptTerms();
+            // Accept terms of service
+            CartPage cart = new CartPage(driver);
+            cart.acceptTerms();
 
-            // Note: do not proceed to actual checkout on demo site
+            //  Navigate to checkout page (Demo site placeholder)
+            CheckoutPage checkout = new CheckoutPage(driver);
+            checkout.clickCheckout(); // Safe placeholder; demo site will stop before real order
+
+            // Assert we are on the checkout page
+            Assert.assertTrue(driver.getCurrentUrl().contains("checkout"), "Should navigate to checkout page");
+
         } catch (Exception e) {
-            // Optional: print exception or fail silently for placeholder
-            System.out.println("Checkout placeholder exception: " + e.getMessage());
+            Assert.fail("Checkout test failed: " + e.getMessage());
         }
     }
 }
