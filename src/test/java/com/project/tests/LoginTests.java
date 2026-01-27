@@ -18,13 +18,21 @@ public class LoginTests extends BaseTest {
         HomePage home = new HomePage(driver);
         home.goToLogin();
 
-        new LoginPage(driver).login(username, password);
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login(username, password);
+
         ProfilePage profile = new ProfilePage(driver);
 
         if (expectedResult) {
-            Assert.assertTrue(profile.isLoggedIn());
+            Assert.assertTrue(
+                    profile.isLoggedIn(),
+                    "Login should succeed for valid credentials"
+            );
         } else {
-            Assert.assertFalse(profile.isLoggedIn());
+            Assert.assertFalse(
+                    profile.isLoggedIn(),
+                    "Login should fail for invalid credentials"
+            );
         }
     }
 }

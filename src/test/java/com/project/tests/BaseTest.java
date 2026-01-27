@@ -7,22 +7,32 @@ import org.testng.annotations.*;
 
 public class BaseTest {
 
-    protected WebDriver driver;
+    public static WebDriver driver;
 
     @Parameters("browser")
     @BeforeMethod
     public void setUp(@Optional("chrome") String browser) {
 
-        driver = BrowserFactory.getDriver(browser);
+        driver = BrowserFactory.getDriver();
 
-        String url = ConfigReader.get("url");
-        driver.get(url != null ? url : "https://demowebshop.tricentis.com/");
+        String url = ConfigReader.get("app.url");
+        if (url == null || url.isEmpty()) {
+            throw new RuntimeException("app.url is not specified in config.properties");
+        }
+
+        driver.get(url);
     }
+
 
     @AfterMethod
     public void tearDown() {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    // Required for Screenshot Listener
+    public static WebDriver getDriver() {
+        return driver;
     }
 }

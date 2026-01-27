@@ -15,16 +15,27 @@ public class ProfileTests extends BaseTest {
     )
     public void checkProfileAccess(String username, String password, boolean expectedResult) {
 
+        // Navigate to login page
         HomePage home = new HomePage(driver);
         home.goToLogin();
-        new LoginPage(driver).login(username, password);
 
+        // Perform login
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.login(username, password);
+
+        // Validate profile access
         ProfilePage profile = new ProfilePage(driver);
 
         if (expectedResult) {
-            Assert.assertTrue(profile.isLoggedIn());
+            Assert.assertTrue(
+                    profile.isLoggedIn(),
+                    "Profile should be accessible for valid user credentials"
+            );
         } else {
-            Assert.assertFalse(profile.isLoggedIn());
+            Assert.assertFalse(
+                    profile.isLoggedIn(),
+                    "Profile should NOT be accessible for invalid user credentials"
+            );
         }
     }
 }

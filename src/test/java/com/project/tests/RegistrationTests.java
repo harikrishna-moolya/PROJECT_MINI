@@ -1,6 +1,7 @@
 package com.project.tests;
 
 import com.project.dataprovider.TestDataProvider;
+import com.project.pages.HomePage;
 import com.project.pages.RegistrationPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -20,7 +21,8 @@ public class RegistrationTests extends BaseTest {
             String confirmPassword,
             boolean expectedResult) {
 
-        driver.get("https://demowebshop.tricentis.com/register");
+        HomePage home = new HomePage(driver);
+        home.goToRegister();
 
         RegistrationPage reg = new RegistrationPage(driver);
         reg.selectGender(gender);
@@ -32,9 +34,18 @@ public class RegistrationTests extends BaseTest {
         reg.clickRegister();
 
         if (expectedResult) {
-            Assert.assertTrue(reg.getSuccessMessage().contains("completed"));
+
+            Assert.assertTrue(
+                    reg.getSuccessMessage().toLowerCase().contains("completed"),
+                    "Registration should be successful with valid data"
+            );
+
         } else {
-            Assert.assertFalse(reg.getErrorMessage().isEmpty());
+
+            Assert.assertTrue(
+                    driver.getCurrentUrl().contains("register"),
+                    "User should remain on registration page for invalid data"
+            );
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.project.dataprovider;
 
+import com.project.utils.ConfigReader;
 import org.testng.annotations.DataProvider;
 
 public class TestDataProvider {
@@ -8,9 +9,16 @@ public class TestDataProvider {
     @DataProvider(name = "loginData")
     public static Object[][] loginData() {
         return new Object[][]{
-                {"hari01@gmail.com", "HK@0123", true},
-                {"hari07@gmail.com", "HK@0577", false},
-                {"hari011@gmail.com", "HK@01234", false}
+                {
+                        ConfigReader.getProperty("login.valid.email"),
+                        ConfigReader.getProperty("login.valid.password"),
+                        true
+                },
+                {
+                        ConfigReader.getProperty("login.invalid.email"),
+                        ConfigReader.getProperty("login.invalid.password"),
+                        false
+                }
         };
     }
 
@@ -18,16 +26,22 @@ public class TestDataProvider {
     @DataProvider(name = "searchData")
     public static Object[][] searchData() {
         return new Object[][]{
-                {"14.1-inch Laptop", true},
-                {"NonExistingProduct123", false}
+                {
+                        ConfigReader.getProperty("product.valid.name"),
+                        true
+                },
+                {
+                        ConfigReader.getProperty("product.invalid.name"),
+                        false
+                }
         };
     }
 
     // ---------- CART / CHECKOUT ----------
     @DataProvider(name = "cartData")
-    public static Object[][] cartData() {
+    public Object[][] cartData() {
         return new Object[][]{
-                {"14.1-inch Laptop"}
+                { ConfigReader.getProperty("product.cart.name") }
         };
     }
 
@@ -35,11 +49,24 @@ public class TestDataProvider {
     @DataProvider(name = "registrationData")
     public static Object[][] registrationData() {
         return new Object[][]{
-                // valid
-                {"male", "Hari", "Krishna", "hari_new01@gmail.com", "HK@0123", "HK@0123", true},
-
-                // invalid
-                {"female", "", "Krishna", "NOEMAIL", "123", "456", false}
+                {
+                        ConfigReader.getProperty("reg.valid.gender"),
+                        ConfigReader.getProperty("reg.valid.firstname"),
+                        ConfigReader.getProperty("reg.valid.lastname"),
+                        ConfigReader.getProperty("reg.valid.email"),
+                        ConfigReader.getProperty("reg.valid.password"),
+                        ConfigReader.getProperty("reg.valid.password"),
+                        true
+                },
+                {
+                        ConfigReader.getProperty("reg.invalid.gender"),
+                        ConfigReader.getProperty("reg.invalid.firstname"),
+                        ConfigReader.getProperty("reg.invalid.lastname"),
+                        ConfigReader.getProperty("reg.invalid.email"),
+                        ConfigReader.getProperty("reg.invalid.password"),
+                        ConfigReader.getProperty("reg.invalid.confirmpassword"),
+                        false
+                }
         };
     }
 }

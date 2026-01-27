@@ -1,10 +1,20 @@
 package com.project.utils;
+
 import org.openqa.selenium.WebDriver;
 
-public class TestUtils {
-    public static void safeQuit(WebDriver driver){
+public final class TestUtils {
 
-        try { if(driver!=null) driver.quit(); }
-        catch(Exception ignored){}
+    private TestUtils() {
+        // Prevent instantiation
+    }
+
+    public static void safeQuit(WebDriver driver) {
+        try {
+            if (driver != null) {
+                driver.quit();
+            }
+        } catch (Exception ignored) {
+            // Intentionally ignored to avoid masking test results
+        }
     }
 }

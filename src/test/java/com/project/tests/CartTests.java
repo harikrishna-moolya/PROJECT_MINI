@@ -3,8 +3,6 @@ package com.project.tests;
 import com.project.dataprovider.TestDataProvider;
 import com.project.pages.CartPage;
 import com.project.pages.HomePage;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -16,15 +14,15 @@ public class CartTests extends BaseTest {
     )
     public void addProductToCart(String productName) {
 
-        driver.findElement(By.id("small-searchterms"))
-                .sendKeys(productName, Keys.ENTER);
-
-        driver.findElements(By.cssSelector("input[value='Add to cart']")).get(0).click();
-
+        // Use HomePage to search and add product
         HomePage home = new HomePage(driver);
+        home.searchAndAddProductToCart(productName);
+
+        // Open cart
         home.openCart();
 
+        // Validate cart is not empty
         CartPage cart = new CartPage(driver);
-        Assert.assertFalse(cart.isCartEmpty());
+        Assert.assertFalse(cart.isCartEmpty(), "Cart should not be empty");
     }
 }

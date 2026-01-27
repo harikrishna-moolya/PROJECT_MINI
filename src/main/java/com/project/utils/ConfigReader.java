@@ -1,16 +1,39 @@
 package com.project.utils;
+
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ConfigReader {
-    private static Properties props = new Properties();
+
+    private static final Properties props = new Properties();
+
     static {
-        try (InputStream in = new FileInputStream("config/config.properties")) {
-            props.load(in);
+        try {
+            // Project root + config/config.properties
+            String configPath = Paths.get(
+                    System.getProperty("user.dir"),
+                    "config",
+                    "config.properties"
+            ).toString();
+
+            try (FileInputStream fis = new FileInputStream(configPath)) {
+                props.load(fis);
+            }
+
         } catch (Exception e) {
-            System.out.println("Could not load config.properties: " + e.getMessage());
+            throw new RuntimeException(
+                    "Failed to load config.properties from /config directory", e
+            );
         }
     }
-    public static String get(String key){ return props.getProperty(key); }
+
+    // Backward compatible
+    public static String get(String key) {
+        return props.getProperty(key);
+    }
+
+    public static String getProperty(String key) {
+        return props.getProperty(key);
+    }
 }
